@@ -66,7 +66,6 @@ def user_info():
                     browser_principal = browser_lista[2]
                     break
 
-
     return user_nome, browser_principal
 
 
@@ -79,3 +78,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
