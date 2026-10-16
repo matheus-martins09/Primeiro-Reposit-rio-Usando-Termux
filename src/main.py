@@ -39,6 +39,7 @@ def user_info():
         print(f"{"Navegador Principal":^30}")
         print("=" * 30)
         print("Firefox [1]\nGoogle Chrome [2]\nMicrosoft Edge [3]")
+        print("-" *30)
 
         browser_principal = input("Digite a opção correspondente: ").strip()
 
