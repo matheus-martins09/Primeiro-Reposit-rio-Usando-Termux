@@ -110,7 +110,7 @@ def update_banco(user_nome: str, hash_pass: str, browser: str):
         cursor = conexao.cursor()
 
         cursor.execute(
-        "INSERT INTO informacoes_system (user_nome, password, browser) VALUES(?, ?, ?)",
+        "INSERT INTO informacoes_sistema(user_nome, password, browser) VALUES(?, ?, ?)",
         (user_nome, hash_pass, browser),
         )
 
