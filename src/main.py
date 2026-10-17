@@ -15,11 +15,38 @@
 #Bibliotecas
 import sqlite3
 from rich import print
+import hashlib
+
+
+def create_database():
+    with sqlite3.connect("system-infos.db") as conexao:
+        cursor = conexao.cursor()
+        
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS informacoes-sistema (
+                user_nome TEXT NOT NULL,
+                password TEXT NOT NULL,
+                browser TEXT NOT NULL
+            )  
+            """)
+        
+        conexao.commit()
+
+
+def hash_generation(user_nome: str, passaword: str):
+    byte_nome = user_nome.encode("utf-8")
+    hash_nome = hashlib.sha256(byte_nome)
+
+    byte_password = passaword.encode("utf-8")
+    hash_password = hashlib.sha256(byte_password)
+
+    return hash_nome.hexdigest(), hash_password.hexdigest()
 
 
 def user_info():
     while True:
         user_nome = input("Digite o nome de usuário: ").strip()
+
         if len(user_nome) < 1:
             print("[yellow]Esse campo deve ser [bold]PREENCHIDO[/bold][/yellow]")
             print("Tente novamente.\n")
@@ -30,6 +57,17 @@ def user_info():
 
         else:
             print("Nome salvo com sucesso!")
+            break
+
+    while True:
+        print("Vamos criar uma senha para o usuário!")
+        password = input("Insira a senha de usuário: ").strip()
+
+        if len(password) < 1:
+            print("[yellow]Esse campo deve ser [bold]PREENCHIDO[/bold][/yellow]")
+
+        else:
+            print("Senha salva com sucesso!")
             break
 
     browser_lista = ["firefox", "google-chrome", "microsoft-edge"]
@@ -67,14 +105,12 @@ def user_info():
                     browser_principal = browser_lista[2]
                     break
 
-    return user_nome, browser_principal
+    return user_nome, password, browser_principal
 
 
 def main():
-    print("Olá, mundo!")
-    user_nome, browser_principal = user_info()
-    print(f"Usuário logado: {user_nome}")
-    print(f"Navegador principal: {browser_principal}")
+    user_nome, password, browser_principal = user_info()
+    hash_nome, hash_pass = hash_generation(user_nome, password)
 
 
 if __name__ == "__main__":
