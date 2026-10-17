@@ -23,7 +23,7 @@ def create_database():
         cursor = conexao.cursor()
         
         cursor.execute("""
-            CREATE TABLE IF NOT EXISTS informacoes-sistema (
+            CREATE TABLE IF NOT EXISTS informacoes_sistema (
                 user_nome TEXT NOT NULL,
                 password TEXT NOT NULL,
                 browser TEXT NOT NULL
@@ -33,14 +33,11 @@ def create_database():
         conexao.commit()
 
 
-def hash_generation(user_nome: str, passaword: str):
-    byte_nome = user_nome.encode("utf-8")
-    hash_nome = hashlib.sha256(byte_nome)
-
+def hash_generation(passaword: str):
     byte_password = passaword.encode("utf-8")
     hash_password = hashlib.sha256(byte_password)
 
-    return hash_nome.hexdigest(), hash_password.hexdigest()
+    return hash_password.hexdigest()
 
 
 def user_info():
@@ -108,11 +105,34 @@ def user_info():
     return user_nome, password, browser_principal
 
 
+def update_banco(user_nome: str, hash_pass: str, browser: str):
+    with sqlite3.connect("system-infos.db") as conexao:
+        cursor = conexao.cursor()
+
+        cursor.execute(
+            "INSERT INTO informacoes_system (user_nome, password) VALUES(?, ?)",
+            (user_nome, hash_pass, browser),
+        )
+
+        conexao.commit()
+        conexao.close()
+
+
 def main():
+    create_database()
+    with sqlite3.connect("system-infos.db") as conexao:
+        cursor = conexao.cursor()
+
     user_nome, password, browser_principal = user_info()
-    hash_nome, hash_pass = hash_generation(user_nome, password)
+    hash_pass = hash_generation(password)
+
+    update_banco(user_nome, hash_pass, browser_principal)
+
+    cursor.execute("SELECT user_nome FROM informacoes_sistema LIMIT 1")
+    user_name = cursor.fetchone()[0]
+
+    print(f"[greenSeja bem-vindo:[/green] [bold{user_name}[/bold]")
 
 
 if __name__ == "__main__":
     main()
-
